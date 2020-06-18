@@ -18,7 +18,7 @@
         else
             $('.img-drag').append('<div id="img-drag">'+img+'</div>');
     }
-    function addOneColum(){
+    function addColumn(){
         let eleCount = $('.ele-area').children().length + 1;
         let id = "square__" + eleCount;
         let h = $($('#temp-square').html());
@@ -124,7 +124,7 @@
             drop: function( event, ui ) {
                 let range = columns.map(c => c.toLowerCase()).indexOf(ui.draggable[0].id.split('-')[0]);
                 if(range > -1){
-                    let i = 0;while(i <= range){addOneColum();i++;};
+                    let i = 0;while(i <= range){addColumn();i++;};
                     arrangeItem();
                 }
             }
