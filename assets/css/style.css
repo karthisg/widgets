@@ -90,3 +90,8 @@ margin: 0 0px;
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+#col-list.disabled .components .grid {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
