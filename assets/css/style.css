@@ -1,4 +1,29 @@
+.scrolable-content::-webkit-scrollbar  {
+    width: 3px;
+  }
+   
+.scrolable-content::-webkit-scrollbar-thumb {
+background: #e5e5e5; 
+border-radius: 10%;
+}
+
+.scrolable-content::-webkit-scrollbar-track {
+background: #fff;
+}
+
+.scrolable-content {
+width: 20px;
+overflow: auto;
+margin: 0 10px;
+}
+
+.scrolable-content {
+width: 100% !important;
+margin: 0 0px;
+}
+
 .dragable {
+    height: 700px;
     border: 1px solid #e8e8e8;
     background-color: #efefef;
     border-radius: 5px;
@@ -25,7 +50,7 @@
 
 #element .square {
     display: none;
-    margin: 10px 50px;
+    margin: 10px 5px;
     height: 300px;
     background-color: #fbfbfb;
     position: relative;
@@ -34,22 +59,30 @@
     position: relative !important;
     left: unset !important;
     top: unset !important;
-    margin: 10px;
+    margin: 0px;
     border-radius: 5px;
+    height: 300px;
+}
+
+.ele-area {
+    margin: 0 !important;
+}
+
+.ele-area > div {
+    padding: 0;
 }
 
 #element .square .image-square {
     display: none;
-    position: absolute;
+    position: relative;
     top: 33%;
-    left: 45%;
     text-align: center;
     cursor: pointer;
 }
-#element.dropped .square {
+#element .square.dropped {
     display: block;
 }
-#element.dropped.img-dropped .square .image-square{
+#element .square.dropped.img-dropped .image-square{
     display: block;
 }
 .image-square.bg-img {

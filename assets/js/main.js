@@ -1,86 +1,139 @@
 (function($){
+    window.widgetElements = [];
+    window.columns = ['One', 'Two', 'Three'];
     function rend(){
-        let h = '<div class="grid-item">\
-            <div class="grid">\
-                <a href="#">\
-                    <span class="glyphicon glyphicon-menu-hamburger"></span>\
-                </a>\
-            </div>\
-        </div>\
-        <div class="grid-text"><span>One Column</span></div>';
-        if($( "#one-col-drag" ).length)
-            $( "#one-col-drag" ).html(h);
-        else
-            $('.components').prepend('<div id="one-col-drag">'+h+'</div>');
-        let img = '<div class="grid-item">\
-            <div class="grid">\
-                <a href="#">\
-                    <svg class="bi bi-card-image" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">\
-                        <path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>\
-                        <path d="M10.648 7.646a.5.5 0 0 1 .577-.093L15.002 9.5V13h-14v-1l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71z"/>\
-                        <path fill-rule="evenodd" d="M4.502 7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>\
-                    </svg>\
-                </a>\
-            </div>\
-        </div>\
-        <div class="grid-text"><span>IMG</span></div>';
+        let cols = columns;
+        cols.forEach(c => {
+            var col = $($('#temp-col-drag').html());
+            col.find('.grid-text').text(c+' Column');
+            c = c.toLowerCase();
+            if($( "#"+c+"-col-drag" ).length)
+                $( "#"+c+"-col-drag" ).html(col);
+            else
+                $('.' +c+'-col-drag').html('<div id="'+c+'-col-drag" class="col-drag">'+col.html()+'</div>');
+        })
+        let img = $('#temp-img-drag').html();
         if($( "#img-drag" ).length)
             $( "#img-drag" ).html(img);
         else
-            $('.components').append('<div id="img-drag">'+img+'</div>');
+            $('.img-drag').append('<div id="img-drag">'+img+'</div>');
     }
-    $(document).ready(function(){
-        rend()
-        $('.dragable').css('height', (outerHeight)+'px');
-        let options = {
-            opacity: 0.35,
-            stop: function( event, ui ) {
-                $( "#one-col-drag" ).fadeOut(function(){
-                    $(this).remove();
-                    rend();
-                });
-                $( "#img-drag" ).draggable({
-                    opacity: 0.35,
-                    stop: function( event, ui ) {
-                        $( "#img-drag" ).fadeOut(function(){
-                            $(this).remove();
-                            rend();
-                        });
-                    }
-                });
-            }
-        }
-        $( "#one-col-drag" ).draggable(options);
-        $( "#element" ).droppable({
-            drop: function( event, ui ) {
-                console.log();
-                if(ui.draggable[0].id == "img-drag")
-                    $( this ).addClass( "img-dropped" )
-                else
-                    $( this ).addClass( "dropped" )
-            }
+    function addOneColum(){
+        let eleCount = $('.ele-area').children().length + 1;
+        let id = "square__" + eleCount;
+        let h = $($('#temp-square').html());
+        h.find('.square').attr('id', id);
+        $('.ele-area').append(h);
+        $('.ele-area .square#'+id + ' .image-square').click(function(){
+            $('.ele-area .square#'+id).find('input[type="file"]').click();
         });
-    
-        $('#img-picker').change(function(){
+        $('.ele-area .square#'+id).find('input[type="file"]').change(function(){
             var input = this;
             var url = $(this).val();
             var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
             var reader = new FileReader();
             reader.onload = function (e) {
-                var img = new Image();
-                img.onload = function() {
-                    let hgt = this.height - (this.height / 2);
-                    console.log(hgt);
-                    $('.image-square').addClass('bg-img').html('');
-                    $('.image-square').css({
-                        'background-image': 'url('+e.target.result+')',
-                        'height': hgt+'px'
-                    });
-                    $('.square').css('height', hgt+'px');
-                }
-                img.src = e.target.result;
+                $('.ele-area .square#'+id + ' .image-square').addClass('bg-img').html('');
+                $('.ele-area .square#'+id + ' .image-square').css({
+                    'background-image': 'url('+e.target.result+')'
+                });
             }
             reader.readAsDataURL(input.files[0]);
+            let k = widgetElements.map(e => e._id).indexOf(id);
+            if(k > -1)widgetElements[k].image = input.files[0];jsonLog();
         });
+        $('.ele-area .square#'+id).droppable({
+            drop: function( event, ui ) {
+                if(ui.draggable[0].id == "img-drag"){
+                    $(this).addClass('img-dropped');
+                    ui.draggable.addClass('dropped');
+                    let k = widgetElements.map(e => e._id).indexOf(id);
+                    if(k > -1)widgetElements[k].isImageDropped = true;jsonLog();
+                }
+            }
+        });
+        widgetElements.push({_id: id, isImageDropped: false, image: null});jsonLog();
+        setTimeout(() => {
+            $('#element').animate({
+                scrollTop: $('.ele-area .square#'+id).offset().top
+            }, 500);
+        }, 200);
+        return id;
+    }
+    function init(){
+        let options = {
+            opacity: 0.35,
+            stop: function( event, ui ) {
+                ui.helper.fadeOut(function(){
+                    $(this).remove();rend();init();
+                });
+
+                (function initImageDrag(){
+                    $( "#img-drag" ).draggable({
+                        opacity: 0.35,
+                        stop: function( event, ui ) {
+                            $( "#img-drag" ).fadeOut(function(){
+                                $(this).remove();
+                                rend();
+                                if(!$( "#img-drag" ).hasClass('dropped')){
+                                    initImageDrag();
+                                }
+                            });
+                        }
+                    });
+                })()
+            }
+        }
+        $( ".col-drag" ).draggable(options);
+    }
+    function arrangeItem(){
+        new Macy({
+            container: '.ele-area',
+            trueOrder: false,
+            waitForImages: false,
+            useOwnImageLoader: false,
+            debug: true,
+            mobileFirst: true,
+            columns: 1,
+            margin: {
+                y: 16,
+                x: '2%',
+            },
+            breakAt: {
+                1200: 2,
+                940: 2,
+                520: 2,
+                400: 1
+            },
+        });
+    }
+    function jsonLog(){
+        var data = [];
+        widgetElements.forEach(e => {
+            var ele = {...e};
+            if(e.isImageDropped && e.image != null){
+                ele.image = { name: e.image.name, size: e.image.size, type: e.image.type  }
+            }
+            data.push(ele);
+        })
+        $('#json-log').text(JSON.stringify(data, undefined, 3))
+    }
+    $(document).ready(function(){
+        $('.dragable').css('height', (650)+'px');
+        $( "#element" ).droppable({
+            drop: function( event, ui ) {
+                let range = columns.map(c => c.toLowerCase()).indexOf(ui.draggable[0].id.split('-')[0]);
+                if(range > -1){
+                    let i = 0;while(i <= range){addOneColum();i++;};
+                    arrangeItem();
+                }
+            }
+        });
+        columns.map(c => c.toLowerCase()).forEach(c => {
+            $('#col-list').append('<div class="'+c+'-col-drag components">\
+                <div id="'+c+'-col-drag" class="col-drag"></div>\
+            </div>')
+        });
+        rend();init();
     })
 })(window.jQuery);

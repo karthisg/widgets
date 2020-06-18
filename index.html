@@ -3,31 +3,22 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<!-- <link rel="stylesheet" href="assets/macy/demo/assets/css/macy.css"> -->
 	<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
 <div style="margin-top: 10px;"></div>
-<input type="file" id="img-picker" style="display: none;" accept="image/*" />
 <div class="container">
 	<div class="row">
 		<div class="col-sm-9 col-xs-12">
-			<div class="dragable" id="element">
+			<div class="dragable scrolable-content" id="element">
 				<div class="head">
 					ELEMENTS
 				</div>
 
-				<div class="square">
-					<div class="image-square" onclick="$('#img-picker').click()">
-						<div>
-							<svg class="bi bi-card-image" width="5em" height="5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-								<path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
-								<path d="M10.648 7.646a.5.5 0 0 1 .577-.093L15.002 9.5V13h-14v-1l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71z"/>
-								<path fill-rule="evenodd" d="M4.502 7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
-							</svg>
-						</div>
-						<span>Choose Image</span>
-					</div>
+				<div class="ele-area row owl-carousel">
+					
 				</div>
 			</div>
 		</div>
@@ -37,18 +28,73 @@
 				<div class="head">
 					WIDGETS
 				</div>
-				<div class="components">
-					<div id="one-col-drag"></div>
+				<div id="col-list">
+
+				</div>
+				<div class="img-drag components">
 					<div id="img-drag"></div>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<pre id="json-log"></pre>
+		</div>
+	</div>
 </div>
+
+<script type="text/html" id="temp-col-drag">
+	<div>
+		<div class="grid-item">
+			<div class="grid">
+				<a href="#">
+					<span class="glyphicon glyphicon-menu-hamburger"></span>
+				</a>
+			</div>
+		</div>
+		<div class="grid-text"><span>Column</span></div>
+	</div>
+</script>
+
+<script type="text/html" id="temp-img-drag">
+	<div class="grid-item">
+		<div class="grid">
+			<a href="#">
+				<svg class="bi bi-card-image" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+					<path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+					<path d="M10.648 7.646a.5.5 0 0 1 .577-.093L15.002 9.5V13h-14v-1l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71z"/>
+					<path fill-rule="evenodd" d="M4.502 7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+				</svg>
+			</a>
+		</div>
+	</div>
+	<div class="grid-text"><span>IMG</span></div>
+</script>
+
+<script type="text/html" id="temp-square">
+	<div class="">
+		<div class="square dropped">
+			<input type="file" style="display: none;" accept="image/*" />
+			<div class="image-square">
+				<div>
+					<svg class="bi bi-card-image" width="5em" height="5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" d="M14.5 3h-13a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+						<path d="M10.648 7.646a.5.5 0 0 1 .577-.093L15.002 9.5V13h-14v-1l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71z"/>
+						<path fill-rule="evenodd" d="M4.502 7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+					</svg>
+				</div>
+				<span>Choose Image</span>
+			</div>
+		</div>
+	</div>
+</script>
 
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/jquery.ui.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/macy.js"></script>
 
 </body>
 </html>
